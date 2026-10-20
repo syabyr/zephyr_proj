@@ -37,7 +37,6 @@ extern void AGC_IRQHandler(void);
 extern void PROTIMER_IRQHandler(void);
 extern void SYNTH_IRQHandler(void);
 extern void RFSENSE_IRQHandler(void);
-extern void RTCC_IRQHandler(void);
 
 static void radio_irq_init(void)
 {
@@ -51,8 +50,10 @@ static void radio_irq_init(void)
 	IRQ_CONNECT(PROTIMER_IRQn, 0, PROTIMER_IRQHandler, 0, 0);
 	IRQ_CONNECT(SYNTH_IRQn, 0, SYNTH_IRQHandler, 0, 0);
 	IRQ_CONNECT(RFSENSE_IRQn, 0, RFSENSE_IRQHandler, 0, 0);
-	/* The RAIL blob uses the sleeptimer service, which runs off RTCC. */
-	IRQ_CONNECT(RTCC_IRQn, 1, RTCC_IRQHandler, 0, 0);
+	/* The RAIL blob uses the sleeptimer service, which runs off RTCC. RTCC
+	 * is also the kernel's clock source, so its interrupt is already
+	 * connected and enabled by the sleeptimer system timer driver.
+	 */
 
 	irq_enable(FRC_PRI_IRQn);
 	irq_enable(FRC_IRQn);
@@ -64,7 +65,6 @@ static void radio_irq_init(void)
 	irq_enable(PROTIMER_IRQn);
 	irq_enable(SYNTH_IRQn);
 	irq_enable(RFSENSE_IRQn);
-	irq_enable(RTCC_IRQn);
 }
 
 static RAIL_Handle_t rail_handle;
