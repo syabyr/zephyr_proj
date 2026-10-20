@@ -1,0 +1,21 @@
+/*
+ * The PA0 push button sits on GPIO port A, which the xg1 SoC devicetree
+ * leaves disabled by default.
+ */
+
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+&gpioa {
+	status = "okay";
+};
+
+/ {
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpioa 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+};
