@@ -1,0 +1,65 @@
+/*
+ * usb2dualuart board overlay for dt_xt_zb1_devkit (BL702).
+ *
+ * Two FTDI-style channels:
+ *   channel A -> UART0, TX GPIO14 / RX GPIO15 (same as the board console pins)
+ *   channel B -> UART1, TX GPIO0  / RX GPIO1
+ *
+ * DTR/RTS and the status LEDs are plain GPIOs, wired the same way as the
+ * original bl_mcu_sdk application (active low on the wire).
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pinctrl/bl702x-pinctrl.h>
+
+/ {
+	ftdi_bridge: ftdi-bridge {
+		compatible = "zephyr,ftdi-dual-uart";
+
+		uart0-dtr-gpios = <&gpio0 23 GPIO_ACTIVE_LOW>;
+		uart0-rts-gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
+		uart1-dtr-gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+		uart1-rts-gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
+
+		led0-gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
+		led1-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&pinctrl {
+	uart1_default: uart1-default {
+		group1 {
+			pinmux = <GPIO0_UART1_TX>,
+				 <GPIO1_UART1_RX>;
+			bias-pull-up;
+			input-schmitt-enable;
+		};
+	};
+};
+
+&uart1 {
+	status = "okay";
+	current-speed = <115200>;
+
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+/*
+ * The board enables i2c0 (GPIO0/GPIO1) and spi0 (GPIO7/GPIO8/GPIO9) by
+ * default, which collide with UART1, the USB PHY pins and LED0.
+ * Disable them for this application.
+ */
+&i2c0 {
+	status = "disabled";
+};
+
+&spi0 {
+	status = "disabled";
+};

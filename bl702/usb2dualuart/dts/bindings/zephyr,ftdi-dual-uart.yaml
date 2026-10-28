@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  Application-private node carrying the GPIOs of the FTDI dual UART bridge.
+
+  It is intentionally a pure "container" node: the application reads the
+  GPIO references directly with GPIO_DT_SPEC_GET().
+
+compatible: "zephyr,ftdi-dual-uart"
+
+properties:
+  uart0-dtr-gpios:
+    type: phandle-array
+    description: DTR output for channel A.
+  uart0-rts-gpios:
+    type: phandle-array
+    description: RTS output for channel A.
+  uart1-dtr-gpios:
+    type: phandle-array
+    description: DTR output for channel B.
+  uart1-rts-gpios:
+    type: phandle-array
+    description: RTS output for channel B.
+  led0-gpios:
+    type: phandle-array
+    description: Channel A activity / power LED.
+  led1-gpios:
+    type: phandle-array
+    description: Channel B activity / USB configured LED.
