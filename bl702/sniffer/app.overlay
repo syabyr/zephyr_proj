@@ -1,0 +1,37 @@
+/*
+ * Copyright The Zephyr Project Contributors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	chosen {
+		zephyr,ieee802154 = &ieee802154;
+		/* Use the full SRAM; the BLE exchange-memory reservation
+		 * (sram0_bt) is not needed for an 802.15.4-only build.
+		 */
+		zephyr,sram = &sram0;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		/* D28 is the BOOT key: it is pulled high while pressed, which
+		 * is also the state that selects the UART bootloader at reset.
+		 */
+		boot_key: boot_key {
+			gpios = <&gpio0 28 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+			label = "BOOT";
+		};
+	};
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
