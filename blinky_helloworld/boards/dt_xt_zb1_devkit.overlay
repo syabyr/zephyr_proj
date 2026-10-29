@@ -1,0 +1,32 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The dt_xt_zb1_devkit devicetree defines no LED node and no led0 alias, so
+ * the generic blinky app cannot compile for it. Add a user LED on header pin
+ * D5 (GPIO5) and enable the GPIO controller, which is disabled in the SoC dtsi.
+ *
+ * Change the pin number and active level below to match your actual LED.
+ * Pins already used by enabled peripherals: GPIO14/15 (UART0 console),
+ * GPIO0/1 (I2C0), GPIO7/8/9 (SPI0 / USB).
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
+			label = "LED0";
+		};
+	};
+
+	aliases {
+		led0 = &led0;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
