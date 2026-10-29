@@ -1,0 +1,63 @@
+/*
+ * usb2uart board overlay for dt_xt_zb1_devkit (BL702).
+ *
+ * The target UART is UART1 on GPIO0 (TX) and GPIO1 (RX), as requested.
+ * DTR/RTS are used by the "BOUFFALOLAB5555RESET" auto-reset sequence and use
+ * the same pins as the vendor example (GPIO22 / GPIO21).
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pinctrl/bl702x-pinctrl.h>
+
+/ {
+	usb2uart: usb2uart {
+		compatible = "zephyr,usb2uart";
+
+		dtr-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+		rts-gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&pinctrl {
+	uart1_default: uart1-default {
+		group1 {
+			pinmux = <GPIO0_UART1_TX>,
+				 <GPIO1_UART1_RX>;
+			bias-pull-up;
+			input-schmitt-enable;
+		};
+	};
+};
+
+&uart1 {
+	status = "okay";
+	current-speed = <115200>;
+
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+/*
+ * i2c0 uses GPIO0/GPIO1 by default on this board and spi0 uses GPIO7/GPIO8
+ * which are the USB D+/D- pins.  Both must be disabled here.
+ */
+&i2c0 {
+	status = "disabled";
+};
+
+&spi0 {
+	status = "disabled";
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "USB serial";
+	};
+};

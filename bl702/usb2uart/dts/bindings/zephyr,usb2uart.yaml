@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  Application-private node with the DTR/RTS GPIOs used by the usb2uart
+  auto-reset sequence.
+
+compatible: "zephyr,usb2uart"
+
+properties:
+  dtr-gpios:
+    type: phandle-array
+    description: DTR output of the bridged serial port.
+  rts-gpios:
+    type: phandle-array
+    description: RTS output of the bridged serial port.
